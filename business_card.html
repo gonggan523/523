@@ -185,8 +185,8 @@
         .design-2 {background:#d8f3ff; color:#333;}
         .design-3 {background:#e9ffd9; color:#333;}
         .design-4 {background:#fff7d1; color:#333;}
-        .design-5 {background:linear-gradient(135deg, #ffe7c7 0%, #ffffff 100%); color:#333;}
-        .design-6 {background:linear-gradient(135deg, #e4e6ff 50%, #ffffff 50%); color:#333;}
+        .design-5 {background:#ffe7c7; color:#333;}
+        .design-6 {background:#e4e6ff; color:#333;}
 
         .card-content {
             padding: 20px;
@@ -312,11 +312,11 @@
                             옐로우
                         </div>
                         <div class="design-option" data-design="5">
-                            <div style="background:linear-gradient(135deg,#ffe7c7 0%,#ffffff 100%);height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            <div style="background:#ffe7c7;height:30px;border-radius:5px;margin-bottom:5px;"></div>
                             피치
                         </div>
                         <div class="design-option" data-design="6">
-                            <div style="background:linear-gradient(135deg,#e4e6ff 50%,#ffffff 50%);height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            <div style="background:#e4e6ff;height:30px;border-radius:5px;margin-bottom:5px;"></div>
                             라벤더
                         </div>
                     </div>
@@ -356,6 +356,7 @@
 
     <script>
     let selectedDesign = 1;
+    const fontFamily = "'Nanum Gothic', sans-serif";
 
     document.querySelectorAll('.design-option').forEach(option => {
         option.addEventListener('click', function() {
@@ -374,7 +375,6 @@
         const name    = document.getElementById('name').value || '이름';
         const phone   = document.getElementById('phone').value || '연락처';
         const email   = document.getElementById('email').value || '이메일';
-        const font    = "'Nanum Gothic', sans-serif";
 
         const patterns = {
             1: '<div class="pattern-circles"></div>',
@@ -407,7 +407,7 @@
         const preview = document.getElementById('cardPreview');
         preview.className = `card-preview design-${selectedDesign}`;
         preview.innerHTML = cardHTML;
-        preview.style.fontFamily = font;
+        preview.style.fontFamily = fontFamily;
 
     }
 
@@ -446,35 +446,23 @@
         const email   = document.getElementById('email').value || '이메일';
 
         const backgrounds = {
-            1: ['#ffd9e8', '#ffd9e8'],
-            2: ['#d8f3ff', '#d8f3ff'],
-            3: ['#e9ffd9', '#e9ffd9'],
-            4: ['#fff7d1', '#fff7d1'],
-            5: ['#ffe7c7', '#ffffff'],
-            6: ['#e4e6ff', '#ffffff']
+            1: '#ffd9e8',
+            2: '#d8f3ff',
+            3: '#e9ffd9',
+            4: '#fff7d1',
+            5: '#ffe7c7',
+            6: '#e4e6ff'
         };
-        const bg = backgrounds[selectedDesign];
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        if (selectedDesign == 6) {
-            gradient.addColorStop(0, bg[0]);
-            gradient.addColorStop(0.5, bg[0]);
-            gradient.addColorStop(0.5, bg[1]);
-            gradient.addColorStop(1, bg[1]);
-        } else {
-            gradient.addColorStop(0, bg[0]);
-            gradient.addColorStop(1, bg[1]);
-        }
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = backgrounds[selectedDesign];
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const textColor = '#333';
         ctx.fillStyle = textColor;
 
-        const font = "'Nanum Gothic', sans-serif";
-        ctx.font = `bold 60px ${font}`;
+        ctx.font = `bold 60px ${fontFamily}`;
         ctx.textAlign = 'left';
         ctx.fillText(company, 60, 120);
-        ctx.font = `36px ${font}`;
+        ctx.font = `36px ${fontFamily}`;
         ctx.fillText(slogan, 60, 180);
 
         ctx.save();
@@ -542,17 +530,17 @@
         ctx.textAlign = 'left';
         ctx.textBaseline = 'alphabetic';
         const gap = 10;
-        ctx.font = `28px ${font}`;
+        ctx.font = `28px ${fontFamily}`;
         const titleWidth = ctx.measureText('대표').width;
-        ctx.font = `bold 48px ${font}`;
+        ctx.font = `bold 48px ${fontFamily}`;
         const nameWidth = ctx.measureText(name).width;
         const startX = canvas.width - 60 - (titleWidth + gap + nameWidth);
-        ctx.font = `28px ${font}`;
+        ctx.font = `28px ${fontFamily}`;
         ctx.fillText('대표', startX, 340);
-        ctx.font = `bold 48px ${font}`;
+        ctx.font = `bold 48px ${fontFamily}`;
         ctx.fillText(name, startX + titleWidth + gap, 340);
         ctx.textAlign = 'right';
-        ctx.font = `32px ${font}`;
+        ctx.font = `32px ${fontFamily}`;
         ctx.fillText(phone, canvas.width - 60, 420);
         ctx.fillText(email, canvas.width - 60, 470);
 

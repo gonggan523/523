@@ -251,8 +251,9 @@
         .company-slogan {font-size: 0.9rem; opacity: 0.9; margin-bottom: 15px;}
 
         .personal-info {text-align: right;}
-        .person-title {font-size: 0.8rem; display: block; line-height: 1; opacity: 0.8;}
-        .person-name {font-size: 1.3rem; font-weight: bold; margin-top: 2px;}
+        .name-wrapper {display: inline-flex; align-items: baseline; gap: 4px;}
+        .person-title {font-size: 0.8rem; opacity: 0.8;}
+        .person-name {font-size: 1.3rem; font-weight: bold;}
         .contact-info {font-size: 0.8rem; line-height: 1.4;}
 
         @media (max-width: 768px) {
@@ -286,7 +287,7 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">연락처</label>
-                    <input type="text" id="phone" placeholder="전화번호를 입력하세요">
+                    <input type="tel" id="phone" pattern="\d{3}-\d{4}-\d{4}" placeholder="000-0000-0000">
                 </div>
                 <div class="form-group">
                     <label for="email">E-mail</label>
@@ -345,8 +346,10 @@
                             <div class="company-slogan">슬로건</div>
                         </div>
                         <div class="personal-info">
-                            <span class="person-title">대표</span>
-                            <span class="person-name">이름</span>
+                            <div class="name-wrapper">
+                                <span class="person-title">대표</span>
+                                <span class="person-name">이름</span>
+                            </div>
                             <div class="contact-info">
                                 <div>연락처</div>
                                 <div>이메일</div>
@@ -400,8 +403,10 @@
                     <div class="company-slogan">${slogan}</div>
                 </div>
                 <div class="personal-info">
-                    <span class="person-title">대표</span>
-                    <span class="person-name">${name}</span>
+                    <div class="name-wrapper">
+                        <span class="person-title">대표</span>
+                        <span class="person-name">${name}</span>
+                    </div>
                     <div class="contact-info">
                         <div>${phone}</div>
                         <div>${email}</div>
@@ -419,6 +424,11 @@
     function generateCard() {
         if (!document.getElementById('company').value || !document.getElementById('name').value) {
             alert('회사명과 이름은 필수 입력 항목입니다.');
+            return;
+        }
+        const phone = document.getElementById('phone').value;
+        if (phone && !/^\d{3}-\d{4}-\d{4}$/.test(phone)) {
+            alert('전화번호 형식은 000-0000-0000 입니다.');
             return;
         }
         updatePreview();
@@ -512,11 +522,19 @@
         }
         ctx.restore();
 
-        ctx.font = `bold 48px ${font}`;
-        ctx.textAlign = 'right';
-        ctx.fillText(name, canvas.width - 60, 340);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        const gap = 10;
         ctx.font = `28px ${font}`;
-        ctx.fillText('대표', canvas.width - 60, 310);
+        const titleWidth = ctx.measureText('대표').width;
+        ctx.font = `bold 48px ${font}`;
+        const nameWidth = ctx.measureText(name).width;
+        const startX = canvas.width - 60 - (titleWidth + gap + nameWidth);
+        ctx.font = `28px ${font}`;
+        ctx.fillText('대표', startX, 340);
+        ctx.font = `bold 48px ${font}`;
+        ctx.fillText(name, startX + titleWidth + gap, 340);
+        ctx.textAlign = 'right';
         ctx.font = `32px ${font}`;
         ctx.fillText(phone, canvas.width - 60, 420);
         ctx.fillText(email, canvas.width - 60, 470);

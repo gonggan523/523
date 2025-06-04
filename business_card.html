@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>명함 제작 프로그램</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Do+Hyeon&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Nanum Gothic', sans-serif;
             background: #f2f2f2;
             min-height: 100vh;
             padding: 20px;
@@ -185,7 +185,7 @@
         .design-2 {background:#d8f3ff; color:#333;}
         .design-3 {background:#e9ffd9; color:#333;}
         .design-4 {background:#fff7d1; color:#333;}
-        .design-5 {background:#ffe7c7; color:#333;}
+        .design-5 {background:linear-gradient(135deg, #ffe7c7 0%, #ffffff 100%); color:#333;}
         .design-6 {background:#e4e6ff; color:#333;}
 
         .card-content {
@@ -293,14 +293,6 @@
                     <label for="email">E-mail</label>
                     <input type="email" id="email" placeholder="이메일을 입력하세요">
                 </div>
-                <div class="form-group">
-                    <label for="fontSelect">폰트 선택</label>
-                    <select id="fontSelect" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;">
-                        <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
-                        <option value="'Nanum Gothic', sans-serif">Nanum Gothic</option>
-                        <option value="'Do Hyeon', sans-serif">Do Hyeon</option>
-                    </select>
-                </div>
                 <div class="design-selector">
                     <label>🎨 디자인 선택</label>
                     <div class="design-grid">
@@ -321,7 +313,7 @@
                             옐로우
                         </div>
                         <div class="design-option" data-design="5">
-                            <div style="background:#ffe7c7;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            <div style="background:linear-gradient(135deg,#ffe7c7 0%,#ffffff 100%);height:30px;border-radius:5px;margin-bottom:5px;"></div>
                             피치
                         </div>
                         <div class="design-option" data-design="6">
@@ -376,7 +368,6 @@
     });
 
     document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePreview));
-    document.getElementById('fontSelect').addEventListener('change', updatePreview);
 
     function updatePreview() {
         const company = document.getElementById('company').value || '회사명';
@@ -384,7 +375,7 @@
         const name    = document.getElementById('name').value || '이름';
         const phone   = document.getElementById('phone').value || '연락처';
         const email   = document.getElementById('email').value || '이메일';
-        const font    = document.getElementById('fontSelect').value;
+        const font    = "'Nanum Gothic', sans-serif";
 
         const patterns = {
             1: '<div class="pattern-circles"></div>',
@@ -440,7 +431,6 @@
         document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('active'));
         document.querySelector('[data-design="1"]').classList.add('active');
         selectedDesign = 1;
-        document.getElementById('fontSelect').selectedIndex = 0;
         updatePreview();
     }
 
@@ -456,21 +446,25 @@
         const phone   = document.getElementById('phone').value || '연락처';
         const email   = document.getElementById('email').value || '이메일';
 
-        const colors = {
-            1: '#ffd9e8',
-            2: '#d8f3ff',
-            3: '#e9ffd9',
-            4: '#fff7d1',
-            5: '#ffe7c7',
-            6: '#e4e6ff'
+        const backgrounds = {
+            1: ['#ffd9e8', '#ffd9e8'],
+            2: ['#d8f3ff', '#d8f3ff'],
+            3: ['#e9ffd9', '#e9ffd9'],
+            4: ['#fff7d1', '#fff7d1'],
+            5: ['#ffe7c7', '#ffffff'],
+            6: ['#e4e6ff', '#e4e6ff']
         };
-        ctx.fillStyle = colors[selectedDesign];
+        const bg = backgrounds[selectedDesign];
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, bg[0]);
+        gradient.addColorStop(1, bg[1]);
+        ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const textColor = '#333';
         ctx.fillStyle = textColor;
 
-        const font = document.getElementById('fontSelect').value;
+        const font = "'Nanum Gothic', sans-serif";
         ctx.font = `bold 60px ${font}`;
         ctx.textAlign = 'left';
         ctx.fillText(company, 60, 120);
@@ -480,7 +474,6 @@
         ctx.save();
         ctx.globalAlpha = 0.1;
         ctx.strokeStyle = textColor;
-        ctx.lineWidth = 3;
         const patternType = {
             1: 'circles',
             2: 'lines',
@@ -490,34 +483,45 @@
             6: 'lines'
         }[selectedDesign];
 
+        const scaleX = canvas.width / 360;
+        const scaleY = canvas.height / 200;
+
         if (patternType === 'circles') {
+            const r = 75 * scaleX;
+            const cx = (360 - 130 + 75) * scaleX;
+            const cy = (-20 + 75) * scaleY;
+            ctx.lineWidth = 2 * scaleX;
             ctx.beginPath();
-            ctx.arc(canvas.width - 120, 120, 100, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(canvas.width - 120, 120, 70, 0, 2 * Math.PI);
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
             ctx.stroke();
         } else if (patternType === 'lines') {
-            for (let i = 0; i < 10; i++) {
+            ctx.lineWidth = 2 * scaleX;
+            const areaW = 100 * scaleX;
+            const step = 12 * scaleX;
+            for (let i = -canvas.height; i < areaW; i += step) {
                 ctx.beginPath();
-                ctx.moveTo(canvas.width - 150 + i * 15, 0);
-                ctx.lineTo(canvas.width - 50 + i * 15, 200);
+                ctx.moveTo(canvas.width - areaW + i, 0);
+                ctx.lineTo(canvas.width + i, canvas.height);
                 ctx.stroke();
             }
         } else if (patternType === 'dots') {
             ctx.fillStyle = textColor;
-            for (let x = canvas.width - 150; x < canvas.width; x += 20) {
-                for (let y = 0; y < 200; y += 20) {
+            const space = 10 * scaleX;
+            for (let x = 0; x < canvas.width; x += space) {
+                for (let y = 0; y < canvas.height; y += space) {
                     ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                    ctx.arc(x, y, scaleX, 0, 2 * Math.PI);
                     ctx.fill();
                 }
             }
         } else if (patternType === 'squares') {
-            for (let x = canvas.width - 150; x < canvas.width; x += 20) {
-                for (let y = 0; y < 200; y += 20) {
-                    ctx.strokeRect(x, y, 10, 10);
-                }
+            ctx.lineWidth = 2 * scaleX;
+            const step = 6 * scaleX;
+            for (let i = -canvas.height; i < canvas.width; i += step) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i + canvas.height, canvas.height);
+                ctx.stroke();
             }
         }
         ctx.restore();

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명함 제작 프로그램</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            background: #f2f2f2;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #b9d6ff;
+            color: #333;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .design-selector {
+            margin-bottom: 30px;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .design-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        .design-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .design-option.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: #fff;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn-primary {
+            background: #b9d6ff;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background: #28a745;
+            color: #fff;
+            margin-top: 15px;
+            padding: 10px 18px;
+            font-size: 14px;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-preview {
+            width: 360px;
+            height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .design-1 {background:#ffd9e8; color:#333;}
+        .design-2 {background:#d8f3ff; color:#333;}
+        .design-3 {background:#e9ffd9; color:#333;}
+        .design-4 {background:#fff7d1; color:#333;}
+        .design-5 {background:#ffe7c7; color:#333;}
+        .design-6 {background:#e4e6ff; color:#333;}
+
+        .card-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .pattern-circles {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+        }
+
+        .pattern-lines {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, currentColor 10px, currentColor 12px);
+        }
+
+        .pattern-dots,
+        .pattern-squares {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .pattern-dots {
+            background: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+
+        .pattern-squares {
+            background: repeating-linear-gradient(45deg, currentColor 0 2px, transparent 2px 6px);
+        }
+
+        .company-info {text-align: left;}
+        .company-name {font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;}
+        .company-slogan {font-size: 0.9rem; opacity: 0.9; margin-bottom: 15px;}
+
+        .personal-info {text-align: right;}
+        .name-wrapper {display: inline-flex; align-items: baseline; gap: 4px;}
+        .person-title {font-size: 0.8rem; opacity: 0.8;}
+        .person-name {font-size: 1.3rem; font-weight: bold;}
+        .contact-info {font-size: 0.8rem; line-height: 1.4;}
+
+        @media (max-width: 768px) {
+            .content {grid-template-columns: 1fr; gap: 20px; padding: 20px;}
+            .card-preview {width: 300px; height: 167px;}
+            .design-grid {grid-template-columns: repeat(2, 1fr);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 명함 제작 프로그램</h1>
+            <p>전문적인 명함을 쉽게 만들어보세요</p>
+        </div>
+
+        <div class="content">
+            <div class="form-section">
+                <h2 style="margin-bottom: 25px; color: #333;">📝 정보 입력</h2>
+                <div class="form-group">
+                    <label for="company">회사명</label>
+                    <input type="text" id="company" placeholder="회사명을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="slogan">슬로건</label>
+                    <input type="text" id="slogan" placeholder="회사 슬로건을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" placeholder="이름을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="phone">연락처</label>
+                    <input type="tel" id="phone" pattern="\d{3}-\d{4}-\d{4}" placeholder="000-0000-0000">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="이메일을 입력하세요">
+                </div>
+                <div class="design-selector">
+                    <label>🎨 디자인 선택</label>
+                    <div class="design-grid">
+                        <div class="design-option active" data-design="1">
+                            <div style="background:#ffd9e8;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            핑크
+                        </div>
+                        <div class="design-option" data-design="2">
+                            <div style="background:#d8f3ff;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            블루
+                        </div>
+                        <div class="design-option" data-design="3">
+                            <div style="background:#e9ffd9;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            민트
+                        </div>
+                        <div class="design-option" data-design="4">
+                            <div style="background:#fff7d1;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            옐로우
+                        </div>
+                        <div class="design-option" data-design="5">
+                            <div style="background:#ffe7c7;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            피치
+                        </div>
+                        <div class="design-option" data-design="6">
+                            <div style="background:#e4e6ff;height:30px;border-radius:5px;margin-bottom:5px;"></div>
+                            라벤더
+                        </div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-primary" onclick="generateCard()">명함 생성</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">초기화</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h2 style="margin-bottom: 25px; color: #333;">👀 미리보기</h2>
+                <div class="card-preview design-1" id="cardPreview">
+                    <div class="card-content">
+                        <div class="card-pattern"><div class="pattern-circles"></div></div>
+                        <div class="company-info">
+                            <div class="company-name">회사명</div>
+                            <div class="company-slogan">슬로건</div>
+                        </div>
+                        <div class="personal-info">
+                            <div class="name-wrapper">
+                                <span class="person-title">대표</span>
+                                <span class="person-name">이름</span>
+                            </div>
+                            <div class="contact-info">
+                                <div>연락처</div>
+                                <div>이메일</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-download" onclick="downloadCard()">📥 이미지 다운로드</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    let selectedDesign = 1;
+    const fontFamily = "'Nanum Gothic', sans-serif";
+
+    document.querySelectorAll('.design-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            selectedDesign = this.getAttribute('data-design');
+            updatePreview();
+        });
+    });
+
+    document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePreview));
+
+    function updatePreview() {
+        const company = document.getElementById('company').value || '회사명';
+        const slogan  = document.getElementById('slogan').value || '슬로건';
+        const name    = document.getElementById('name').value || '이름';
+        const phone   = document.getElementById('phone').value || '연락처';
+        const email   = document.getElementById('email').value || '이메일';
+
+        const patterns = {
+            1: '<div class="pattern-circles"></div>',
+            2: '<div class="pattern-lines"></div>',
+            3: '<div class="pattern-dots"></div>',
+            4: '<div class="pattern-squares"></div>',
+            5: '<div class="pattern-circles"></div>',
+            6: '<div class="pattern-lines"></div>'
+        };
+
+        const cardHTML = `
+            <div class="card-content">
+                <div class="card-pattern">${patterns[selectedDesign]}</div>
+                <div class="company-info">
+                    <div class="company-name">${company}</div>
+                    <div class="company-slogan">${slogan}</div>
+                </div>
+                <div class="personal-info">
+                    <div class="name-wrapper">
+                        <span class="person-title">대표</span>
+                        <span class="person-name">${name}</span>
+                    </div>
+                    <div class="contact-info">
+                        <div>${phone}</div>
+                        <div>${email}</div>
+                    </div>
+                </div>
+            </div>`;
+
+        const preview = document.getElementById('cardPreview');
+        preview.className = `card-preview design-${selectedDesign}`;
+        preview.innerHTML = cardHTML;
+        preview.style.fontFamily = fontFamily;
+
+    }
+
+    function generateCard() {
+        if (!document.getElementById('company').value || !document.getElementById('name').value) {
+            alert('회사명과 이름은 필수 입력 항목입니다.');
+            return;
+        }
+        const phone = document.getElementById('phone').value;
+        if (phone && !/^\d{3}-\d{4}-\d{4}$/.test(phone)) {
+            alert('전화번호 형식은 000-0000-0000 입니다.');
+            return;
+        }
+        updatePreview();
+    }
+
+
+    function resetForm() {
+        document.querySelectorAll('input').forEach(i => i.value = '');
+        document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('active'));
+        document.querySelector('[data-design="1"]').classList.add('active');
+        selectedDesign = 1;
+        updatePreview();
+    }
+
+    function downloadCard() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1063; // 90mm
+        canvas.height = 591; // 50mm
+
+        const company = document.getElementById('company').value || '회사명';
+        const slogan  = document.getElementById('slogan').value || '슬로건';
+        const name    = document.getElementById('name').value || '이름';
+        const phone   = document.getElementById('phone').value || '연락처';
+        const email   = document.getElementById('email').value || '이메일';
+
+        const backgrounds = {
+            1: '#ffd9e8',
+            2: '#d8f3ff',
+            3: '#e9ffd9',
+            4: '#fff7d1',
+            5: '#ffe7c7',
+            6: '#e4e6ff'
+        };
+        ctx.fillStyle = backgrounds[selectedDesign];
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const textColor = '#333';
+        ctx.fillStyle = textColor;
+
+        ctx.font = `bold 60px ${fontFamily}`;
+        ctx.textAlign = 'left';
+        ctx.fillText(company, 60, 120);
+        ctx.font = `36px ${fontFamily}`;
+        ctx.fillText(slogan, 60, 180);
+
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        ctx.strokeStyle = textColor;
+        const patternType = {
+            1: 'circles',
+            2: 'lines',
+            3: 'dots',
+            4: 'squares',
+            5: 'circles',
+            6: 'lines'
+        }[selectedDesign];
+
+        const scaleX = canvas.width / 360;
+        const scaleY = canvas.height / 200;
+
+        if (patternType === 'circles') {
+            const r = 75 * scaleX;
+            const cx = (360 - 130 + 75) * scaleX;
+            const cy = (-20 + 75) * scaleY;
+            ctx.lineWidth = 2 * scaleX;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.stroke();
+        } else if (patternType === 'lines') {
+            ctx.lineWidth = 2 * scaleX;
+            const areaW = 100 * scaleX;
+            const step = 12 * scaleX;
+            for (let i = -canvas.height; i < areaW; i += step) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - areaW + i, 0);
+                ctx.lineTo(canvas.width + i, canvas.height);
+                ctx.stroke();
+            }
+        } else if (patternType === 'dots') {
+            ctx.fillStyle = textColor;
+            const space = 10 * scaleX;
+            const areaW = 150 * scaleX;
+            const areaH = 150 * scaleY;
+            const startX = canvas.width - areaW - 20 * scaleX;
+            const startY = -20 * scaleY;
+            for (let x = startX; x <= startX + areaW; x += space) {
+                for (let y = startY; y <= startY + areaH; y += space) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, scaleX, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+        } else if (patternType === 'squares') {
+            ctx.lineWidth = 2 * scaleX;
+            const size = 150 * scaleX;
+            const startX = canvas.width - size - 20 * scaleX;
+            const startY = -20 * scaleY;
+            const step = 6 * scaleX;
+            for (let i = -size; i < size; i += step) {
+                ctx.beginPath();
+                ctx.moveTo(startX + i, startY);
+                ctx.lineTo(startX + i + size, startY + size);
+                ctx.stroke();
+            }
+        }
+        ctx.restore();
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        const gap = 10;
+        ctx.font = `28px ${fontFamily}`;
+        const titleWidth = ctx.measureText('대표').width;
+        ctx.font = `bold 48px ${fontFamily}`;
+        const nameWidth = ctx.measureText(name).width;
+        const startX = canvas.width - 60 - (titleWidth + gap + nameWidth);
+        ctx.font = `28px ${fontFamily}`;
+        ctx.fillText('대표', startX, 340);
+        ctx.font = `bold 48px ${fontFamily}`;
+        ctx.fillText(name, startX + titleWidth + gap, 340);
+        ctx.textAlign = 'right';
+        ctx.font = `32px ${fontFamily}`;
+        ctx.fillText(phone, canvas.width - 60, 420);
+        ctx.fillText(email, canvas.width - 60, 470);
+
+        const link = document.createElement('a');
+        link.download = `명함_${name || 'business_card'}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    updatePreview();
+    </script>
+</body>
+</html>

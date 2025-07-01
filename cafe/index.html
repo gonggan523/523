@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카페 관리 시스템 - 스케줄</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>카페 스케줄 관리</h1>
+<div id="schedule"></div>
+<button id="requestBtn">스케줄 변경 요청</button>
+<div id="requestForm" class="hidden">
+  <h2>변경 요청</h2>
+  <label>날짜: <input type="date" id="reqDate"></label>
+  <label>원래 근무: <input type="text" id="reqOriginal"></label>
+  <label>변경 요청: <input type="text" id="reqShift"></label>
+  <label>사유: <input type="text" id="reqReason"></label>
+  <button id="submitRequest">요청 제출</button>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
